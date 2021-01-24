@@ -1,0 +1,948 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "API Simple CRUD",
+        "version": "1.0.0"
+    },
+    "servers": [
+        {
+            "url": "http://localhost:8000/api",
+            "description": "Local"
+        }
+    ],
+    "paths": {
+        "/v1/auth/login": {
+            "post": {
+                "tags": [
+                    "Authentication"
+                ],
+                "summary": "Get access token for application",
+                "description": "Return access token",
+                "operationId": "App\\Http\\Controllers\\API\\AuthController::login",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/AuthRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "allOf": [
+                                        {
+                                            "$ref": "#/components/schemas/Wrapper"
+                                        },
+                                        {
+                                            "properties": {
+                                                "data": {
+                                                    "$ref": "#/components/schemas/AuthResponse"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Credential not match",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "allOf": [
+                                        {
+                                            "$ref": "#/components/schemas/Wrapper"
+                                        },
+                                        {
+                                            "properties": {
+                                                "data": {
+                                                    "$ref": "#/components/schemas/AuthRequest"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Error validation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "allOf": [
+                                        {
+                                            "$ref": "#/components/schemas/Wrapper"
+                                        },
+                                        {
+                                            "properties": {
+                                                "data": {
+                                                    "$ref": "#/components/schemas/AuthRequest"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/auth/logout": {
+            "delete": {
+                "tags": [
+                    "Authentication"
+                ],
+                "summary": "Logout from application",
+                "operationId": "App\\Http\\Controllers\\API\\AuthController::logout",
+                "responses": {
+                    "200": {
+                        "description": "Successful",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "allOf": [
+                                        {
+                                            "$ref": "#/components/schemas/Wrapper"
+                                        },
+                                        {
+                                            "properties": {
+                                                "data": {
+                                                    "description": "Handle user logout from application",
+                                                    "example": "null"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "allOf": [
+                                        {
+                                            "$ref": "#/components/schemas/Wrapper"
+                                        },
+                                        {
+                                            "properties": {
+                                                "data": {
+                                                    "description": "Handle user logout from application",
+                                                    "example": "null"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/v1/user": {
+            "get": {
+                "tags": [
+                    "Simple CRUD"
+                ],
+                "summary": "Get resources",
+                "operationId": "App\\Http\\Controllers\\API\\UserController::index",
+                "parameters": [
+                    {
+                        "name": "search",
+                        "in": "query",
+                        "description": "Keywords of search",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Number of page",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "status",
+                        "in": "query",
+                        "description": "Filter by status",
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "active",
+                                "inactive"
+                            ]
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "allOf": [
+                                        {
+                                            "$ref": "#/components/schemas/Wrapper"
+                                        },
+                                        {
+                                            "properties": {
+                                                "pagination": {
+                                                    "$ref": "#/components/schemas/Pagination"
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        {
+                                            "properties": {
+                                                "data": {
+                                                    "description": "Get resource of detail user",
+                                                    "type": "array",
+                                                    "items": {
+                                                        "allOf": [
+                                                            {
+                                                                "$ref": "#/components/schemas/UserDetailResponse"
+                                                            },
+                                                            {
+                                                                "allOf": [
+                                                                    {
+                                                                        "properties": {
+                                                                            "user": {
+                                                                                "$ref": "#/components/schemas/UserResponse"
+                                                                            }
+                                                                        },
+                                                                        "type": "object"
+                                                                    }
+                                                                ]
+                                                            }
+                                                        ]
+                                                    }
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "allOf": [
+                                        {
+                                            "$ref": "#/components/schemas/Wrapper"
+                                        },
+                                        {
+                                            "properties": {
+                                                "data": {
+                                                    "description": "Get resource of detail user",
+                                                    "example": "null"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/v1/user/detail/{id}": {
+            "get": {
+                "tags": [
+                    "Simple CRUD"
+                ],
+                "summary": "Get resources specific by id",
+                "operationId": "App\\Http\\Controllers\\API\\UserController::show",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID of user detail",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "allOf": [
+                                        {
+                                            "$ref": "#/components/schemas/Wrapper"
+                                        },
+                                        {
+                                            "properties": {
+                                                "data": {
+                                                    "description": "Get resource specific by id",
+                                                    "allOf": [
+                                                        {
+                                                            "$ref": "#/components/schemas/UserDetailResponse"
+                                                        },
+                                                        {
+                                                            "allOf": [
+                                                                {
+                                                                    "properties": {
+                                                                        "user": {
+                                                                            "$ref": "#/components/schemas/UserResponse"
+                                                                        }
+                                                                    },
+                                                                    "type": "object"
+                                                                }
+                                                            ]
+                                                        }
+                                                    ]
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "allOf": [
+                                        {
+                                            "$ref": "#/components/schemas/Wrapper"
+                                        },
+                                        {
+                                            "properties": {
+                                                "data": {
+                                                    "description": "Get resource specific by id",
+                                                    "example": "null"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Record not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "allOf": [
+                                        {
+                                            "$ref": "#/components/schemas/Wrapper"
+                                        },
+                                        {
+                                            "properties": {
+                                                "data": {
+                                                    "description": "Get resource specific by id",
+                                                    "example": "null"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/v1/user/upsert": {
+            "put": {
+                "tags": [
+                    "Simple CRUD"
+                ],
+                "summary": "Create new resource",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/UserDetailRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "allOf": [
+                                        {
+                                            "$ref": "#/components/schemas/Wrapper"
+                                        },
+                                        {
+                                            "properties": {
+                                                "data": {
+                                                    "example": "null"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "allOf": [
+                                        {
+                                            "$ref": "#/components/schemas/Wrapper"
+                                        },
+                                        {
+                                            "properties": {
+                                                "data": {
+                                                    "example": "null"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Error validation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "allOf": [
+                                        {
+                                            "$ref": "#/components/schemas/Wrapper"
+                                        },
+                                        {
+                                            "properties": {
+                                                "data": {
+                                                    "$ref": "#/components/schemas/UserDetailRequest"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/v1/user/upsert/{id}": {
+            "put": {
+                "tags": [
+                    "Simple CRUD"
+                ],
+                "summary": "Update resource specific by id",
+                "operationId": "App\\Http\\Controllers\\API\\UserController::upsert",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID of user detail",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/UserDetailRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "allOf": [
+                                        {
+                                            "$ref": "#/components/schemas/Wrapper"
+                                        },
+                                        {
+                                            "properties": {
+                                                "data": {
+                                                    "description": "Handle store or update",
+                                                    "example": "null"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "allOf": [
+                                        {
+                                            "$ref": "#/components/schemas/Wrapper"
+                                        },
+                                        {
+                                            "properties": {
+                                                "data": {
+                                                    "description": "Handle store or update",
+                                                    "example": "null"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Error validation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "allOf": [
+                                        {
+                                            "$ref": "#/components/schemas/Wrapper"
+                                        },
+                                        {
+                                            "properties": {
+                                                "data": {
+                                                    "$ref": "#/components/schemas/UserDetailRequest"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/v1/user/remove/{id}": {
+            "delete": {
+                "tags": [
+                    "Simple CRUD"
+                ],
+                "summary": "Remove resources specific by id",
+                "operationId": "App\\Http\\Controllers\\API\\UserController::destroy",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "If you fill this segment that action is update, then if you not fill that action is store",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "allOf": [
+                                        {
+                                            "$ref": "#/components/schemas/Wrapper"
+                                        },
+                                        {
+                                            "properties": {
+                                                "data": {
+                                                    "description": "Remove resource specific by id",
+                                                    "example": "null"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "allOf": [
+                                        {
+                                            "$ref": "#/components/schemas/Wrapper"
+                                        },
+                                        {
+                                            "properties": {
+                                                "data": {
+                                                    "description": "Remove resource specific by id",
+                                                    "example": "null"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Record not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "allOf": [
+                                        {
+                                            "$ref": "#/components/schemas/Wrapper"
+                                        },
+                                        {
+                                            "properties": {
+                                                "data": {
+                                                    "description": "Remove resource specific by id",
+                                                    "example": "null"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "AuthRequest": {
+                "title": "Authentication Request",
+                "description": "AuthResponse request model",
+                "properties": {
+                    "email": {
+                        "title": "email",
+                        "description": "email address",
+                        "type": "string",
+                        "format": "string",
+                        "example": "user@test.com"
+                    },
+                    "password": {
+                        "title": "password",
+                        "description": "password",
+                        "type": "string",
+                        "format": "string",
+                        "example": "password"
+                    }
+                },
+                "type": "object",
+                "xml": {
+                    "name": "AuthRequest"
+                }
+            },
+            "AuthResponse": {
+                "title": "Authentication",
+                "description": "AuthResponse model",
+                "properties": {
+                    "accessToken": {
+                        "title": "access_token",
+                        "description": "access token",
+                        "type": "string",
+                        "format": "string",
+                        "example": "asdasdasdsadasd"
+                    }
+                },
+                "type": "object",
+                "xml": {
+                    "name": "AuthResponse"
+                }
+            },
+            "Pagination": {
+                "title": "Pagination Wrapper",
+                "description": "Pagination model",
+                "properties": {
+                    "current_page": {
+                        "title": "current page",
+                        "description": "Show current page number",
+                        "type": "integer",
+                        "format": "integer",
+                        "example": "1"
+                    },
+                    "first_page_url": {
+                        "title": "show first page url",
+                        "description": "Show first page url",
+                        "type": "string",
+                        "format": "string",
+                        "example": "http://localhost:8000/api/v1/user?page=1"
+                    },
+                    "from": {
+                        "title": "show start item from",
+                        "description": "Show start item from",
+                        "type": "integer",
+                        "format": "integer",
+                        "example": "1"
+                    },
+                    "last_page": {
+                        "title": "show last page",
+                        "description": "Show last page",
+                        "type": "integer",
+                        "format": "integer",
+                        "example": "1"
+                    },
+                    "last_page_url": {
+                        "title": "show last page url",
+                        "description": "Show last page url",
+                        "type": "string",
+                        "format": "string",
+                        "example": "http://localhost:8000/api/v1/user?page=1"
+                    },
+                    "next_page_url": {
+                        "title": "show next page url",
+                        "description": "Show next page url",
+                        "type": "string",
+                        "format": "string",
+                        "example": "null"
+                    },
+                    "path": {
+                        "title": "show path page url",
+                        "description": "Show path page url",
+                        "type": "string",
+                        "format": "string",
+                        "example": "http://localhost:8000/api/v1/user"
+                    },
+                    "per_page": {
+                        "title": "show per page",
+                        "description": "Show per page",
+                        "type": "integer",
+                        "format": "integer",
+                        "example": "15"
+                    },
+                    "prev_page_url": {
+                        "title": "show previous page url",
+                        "description": "Show previous page url",
+                        "type": "string",
+                        "format": "string",
+                        "example": "null"
+                    },
+                    "to": {
+                        "title": "show last item number of current page",
+                        "description": "Show last item number of current page",
+                        "type": "integer",
+                        "format": "integer",
+                        "example": "13"
+                    },
+                    "total": {
+                        "title": "show total item",
+                        "description": "Show total item",
+                        "type": "string",
+                        "format": "integer",
+                        "example": "13"
+                    }
+                },
+                "type": "object",
+                "xml": {
+                    "name": "Pagination"
+                }
+            },
+            "UserDetailRequest": {
+                "title": "User Detail Request",
+                "description": "User detail request model",
+                "properties": {
+                    "user_id": {
+                        "title": "user_id",
+                        "description": "ID of user",
+                        "type": "integer",
+                        "format": "int",
+                        "example": "1"
+                    },
+                    "status": {
+                        "title": "status",
+                        "description": "Status of user detail",
+                        "type": "string",
+                        "format": "string",
+                        "example": "active"
+                    },
+                    "position": {
+                        "title": "position",
+                        "description": "Position of user detail",
+                        "type": "string",
+                        "format": "string",
+                        "example": "Web Programmer"
+                    }
+                },
+                "type": "object",
+                "xml": {
+                    "name": "UserDetailRequest"
+                }
+            },
+            "UserDetailResponse": {
+                "title": "User Detail Response",
+                "description": "User detail response model",
+                "properties": {
+                    "id": {
+                        "title": "ID",
+                        "description": "ID of user detail",
+                        "type": "integer",
+                        "format": "int",
+                        "example": "1"
+                    },
+                    "status": {
+                        "title": "status",
+                        "description": "Status of user detail",
+                        "type": "string",
+                        "format": "string",
+                        "example": "active"
+                    },
+                    "position": {
+                        "title": "position",
+                        "description": "Position of user detail",
+                        "type": "string",
+                        "format": "string",
+                        "example": "Web Programmer"
+                    }
+                },
+                "type": "object",
+                "xml": {
+                    "name": "UserDetailResponse"
+                }
+            },
+            "UserResponse": {
+                "title": "User Response",
+                "description": "User response model",
+                "properties": {
+                    "id": {
+                        "title": "ID",
+                        "description": "ID of user",
+                        "type": "integer",
+                        "format": "int",
+                        "example": "1"
+                    },
+                    "name": {
+                        "title": "name",
+                        "description": "name of user",
+                        "type": "string",
+                        "format": "string",
+                        "example": "lorem ipsum"
+                    },
+                    "email": {
+                        "title": "email",
+                        "description": "Email address of user",
+                        "type": "string",
+                        "format": "string",
+                        "example": "loremipsum@mail.org"
+                    }
+                },
+                "type": "object",
+                "xml": {
+                    "name": "UserResponse"
+                }
+            },
+            "Wrapper": {
+                "title": "Wrapper Response",
+                "description": "Wrapper Response",
+                "properties": {
+                    "data": {
+                        "title": "data",
+                        "description": "Data",
+                        "type": "object",
+                        "format": "object"
+                    },
+                    "message": {
+                        "title": "message",
+                        "description": "message",
+                        "type": "string",
+                        "format": "string",
+                        "example": "message"
+                    }
+                },
+                "type": "object",
+                "xml": {
+                    "name": "Wrapper"
+                }
+            }
+        },
+        "securitySchemes": {
+            "bearerAuth": {
+                "type": "http",
+                "name": "bearerAuth",
+                "in": "header",
+                "bearerFormat": "JWT",
+                "scheme": "bearer"
+            }
+        }
+    },
+    "security": [
+        []
+    ]
+}
